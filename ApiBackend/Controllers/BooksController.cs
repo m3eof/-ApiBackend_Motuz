@@ -46,7 +46,7 @@ namespace ApiBackend.Controllers
         }
 
         [HttpGet("getUserByUsername/Title")]
-        public IActionResult GetUserByUsername(string title)
+        public IActionResult GetBookByTitle(string title)
         {
 
             var book = Context.Books.FirstOrDefault(x => x.Title == title);
@@ -54,7 +54,7 @@ namespace ApiBackend.Controllers
 
             if (book == null)
             {
-                return NotFound("Автор не найден");
+                return NotFound("Книга не найдена");
             }
 
 
@@ -104,13 +104,6 @@ namespace ApiBackend.Controllers
                 GenreId = book.GenreId,
             };
 
-
-            if (book.BookId < 0)
-            {
-                return BadRequest("ID не может быть минусовым :(");
-            }
-
-            // мб проверка на несуществующие айдишники хз
 
             Context.Books.Update(bookUpd);
             Context.SaveChanges();

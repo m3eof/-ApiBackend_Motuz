@@ -98,13 +98,7 @@ namespace ApiBackend.Controllers
                 Bio = author.Bio,
             };
 
-            
-            if (author.AuthorId < 0)
-            {
-                return BadRequest("ID не может быть минусовым :(");
-            }
-            
-            // мб проверка на несуществующие айдишники хз
+           
           
             Context.Authors.Update(authorUpd);
             Context.SaveChanges();

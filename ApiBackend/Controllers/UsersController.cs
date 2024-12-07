@@ -117,8 +117,6 @@ namespace ApiBackend.Controllers
             };
 
 
-            // мб проверка на несуществующие айдишники хз
-
             Context.Users.Update(userUpd);
             Context.SaveChanges();
             return Ok();

@@ -73,12 +73,13 @@ namespace ApiBackend.Controllers
             };
 
 
-            // мб проверка на несуществующие айдишники хз
+
 
             Context.Exchanges.Update(exchangeUpd);
             Context.SaveChanges();
             return Ok();
         }
+       
 
         [HttpDelete]
 
