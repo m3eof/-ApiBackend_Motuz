@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "jORyRGSYqfGPNLd0iyCKNq7NyquSZlWHYe51jV0lymk=",
+  "Source": "ApiBackend",
+  "BasePath": "_content/ApiBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

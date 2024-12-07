@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionString=Server=db;Database=recensii;Integrated Security=SSPI;
+
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      - "ACCEPT_EULA=Y"
+    container_name: mssql
+    ports:
+      - "1433:1433"
