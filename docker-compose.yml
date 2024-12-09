@@ -9,7 +9,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:5000
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionString=Server=db;Database=recensii;Integrated Security=SSPI;
+      - ConnectionString=Server=db;Database=recensii227;User=sa;Password=Password123!;MultipleActiveResultSets=true
 
     ports:
       - "5000:5000"
@@ -20,6 +20,7 @@ services:
     image: "mcr.microsoft.com/mssql/server"
     environment:
       - "ACCEPT_EULA=Y"
+      - "SA_PASSWORD=Password123!"
     container_name: mssql
     ports:
       - "1433:1433"

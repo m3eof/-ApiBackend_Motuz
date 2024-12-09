@@ -3,11 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiBackend", "ApiBackend\ApiBackend.csproj", "{7E0CBB07-2926-48C6-8524-98C1E5933015}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{109101A9-7F4A-4BDC-8470-0998A5BCB7F7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{104D57D3-72D4-493B-8A99-52EBFA366193}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiBackend", "ApiBackend\ApiBackend.csproj", "{7E0CBB07-2926-48C6-8524-98C1E5933015}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +15,6 @@ Global
 		{7E0CBB07-2926-48C6-8524-98C1E5933015}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E0CBB07-2926-48C6-8524-98C1E5933015}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E0CBB07-2926-48C6-8524-98C1E5933015}.Release|Any CPU.Build.0 = Release|Any CPU
-		{109101A9-7F4A-4BDC-8470-0998A5BCB7F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{109101A9-7F4A-4BDC-8470-0998A5BCB7F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{109101A9-7F4A-4BDC-8470-0998A5BCB7F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{109101A9-7F4A-4BDC-8470-0998A5BCB7F7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{104D57D3-72D4-493B-8A99-52EBFA366193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{104D57D3-72D4-493B-8A99-52EBFA366193}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{104D57D3-72D4-493B-8A99-52EBFA366193}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{104D57D3-72D4-493B-8A99-52EBFA366193}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
