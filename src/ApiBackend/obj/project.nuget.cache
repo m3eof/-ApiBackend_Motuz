@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Jd3/pwIlvgdJrHq86bVWSR1ARRQ/LeqnFQ+T081LQ9MZqDPmHtTV8V9mLN+8tpG2zSJAl+B8GyspS5hG0Cdzew==",
+  "dgSpecHash": "cGWL4TOp6ZhWymXbVM6CYJbYCobHPdng/xyZP5a9zUf/QtBST0ypA8xLJpoDB3HV7BZtcWhlBF3r+bUEQJlElA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Elena\\Desktop\\motuzprakt\\ApiBackend\\ApiBackend\\ApiBackend.csproj",
+  "projectFilePath": "C:\\Users\\Elena\\Desktop\\motuzprakt\\ApiBackend\\src\\ApiBackend\\ApiBackend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Elena\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Elena\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",

@@ -1,0 +1,16 @@
+﻿@page "/"
+
+<h1>Hello, world!</h1>
+<p>Текущая дата: @CurrentDate</p>
+<p>Текущее время: @CurrentTime</p>
+
+@code{
+	string CurrentDate;
+	string CurrentTime;
+
+	protected override async Task OnInitializedAsync(){
+		var date = DateTime.Now;
+		CurrentDate = date.ToShortDateString();
+		CurrentTime = date.ToShortTimeString();
+	}
+}
