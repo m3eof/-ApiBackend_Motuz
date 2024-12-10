@@ -4,7 +4,24 @@
 <p>Текущая дата: @CurrentDate</p>
 <p>Текущее время: @CurrentTime</p>
 
+@foreach (var user in result)
+{
+	<p>@user.UsersId @user.Username @user.Email</p>
+}
+
 @code{
+	public class User
+	{
+		public int UsersId { get; set; }
+		public string Username { get; set; } = null!;
+		public string Email { get; set; } = null!;
+		public string UserPassword { get; set; } = null!;
+		public int? FollowerNumber { get; set; }
+		public int? FollowingNumber { get; set; }
+	}
+
+	public User[] result = new User[] { };
+
 	string CurrentDate;
 	string CurrentTime;
 
@@ -12,5 +29,12 @@
 		var date = DateTime.Now;
 		CurrentDate = date.ToShortDateString();
 		CurrentTime = date.ToShortTimeString();
+
+		var client = new HttpClient();
+		client.BaseAddress = new Uri("https://apibackend-motuz-1.onrender.com/");
+
+		result = await client.GetFromJsonAsync<User[]>("api/Users");
+
+		return;
 	}
 }

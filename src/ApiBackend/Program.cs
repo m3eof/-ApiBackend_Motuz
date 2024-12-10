@@ -1,5 +1,6 @@
 using ApiBackend.Models;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.WebRequestMethods;
 
 namespace ApiBackend
 {
@@ -35,9 +36,15 @@ namespace ApiBackend
                     app.UseSwaggerUI();
                 }
 
-           // app.UseHttpsRedirection();
+			// app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseCors(builder => builder.WithOrigins(new[] {"https://localhost:7054/", })
+            .AllowAnyHeader() 
+            .AllowAnyMethod());
+
+
+
+		app.UseAuthorization();
 
 
             app.MapControllers();
