@@ -1,4 +1,4 @@
-﻿@page "/Users"
+﻿@page "/users"
 
 <section id="">
     <div class="container">
@@ -13,9 +13,10 @@
                     <th scope="col">Id</th>
                     <th scope="col">Username</th>
                     <th scope="col">Email</th>
-                    <th scope="col">UserPassword</th>
+                  
                     <th scope="col">FollowerNumber</th>
                     <th scope="col">FollowingNumber</th>
+                   
                 </tr>
             </thead>
             <tbody>
@@ -25,9 +26,10 @@
                         <th scope="row">@user.UsersId</th>
                         <td>@user.Username</td>
                         <td>@user.Email</td>
-                        <td>@user.UserPassword</td>
+                        
                         <td>@user.FollowerNumber</td>
                         <td>@user.FollowingNumber</td>
+                      
                     </tr>
                 }
             </tbody>
@@ -45,6 +47,7 @@
         public string UserPassword { get; set; } = null!;
         public int? FollowerNumber { get; set; }
         public int? FollowingNumber { get; set; }
+        public byte[] CreatedAt { get; set; } = null!;
     }
 
     public User[] result = new User[] { };
@@ -61,7 +64,7 @@
         var client = new HttpClient();
         client.BaseAddress = new Uri("https://apibackend-motuz-1.onrender.com");
 
-        result = await client.GetFromJsonAsync<User[]>("api/Users");
+        result = await client.GetFromJsonAsync<User[]>("api/users");
 
         return;
     }

@@ -18,6 +18,8 @@ namespace ApiBackend
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -40,6 +42,7 @@ namespace ApiBackend
 
             app.UseCors(builder => builder.WithOrigins(new[] {"https://localhost:7274/", })
             .AllowAnyHeader() 
+            .AllowAnyOrigin()
             .AllowAnyMethod());
 
 
