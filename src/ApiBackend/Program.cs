@@ -38,18 +38,14 @@ namespace ApiBackend
 
 			// app.UseHttpsRedirection();
 
-            app.UseCors(builder => builder.WithOrigins(new[] {"https://localhost:7054/", })
+            app.UseCors(builder => builder.WithOrigins(new[] {"https://localhost:7274/", })
             .AllowAnyHeader() 
             .AllowAnyMethod());
 
 
 
-		app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            app.Run();
+		    app.UseHttpsRedirection();
+            app.UseAuthorization();
         }
     }
 }

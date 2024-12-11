@@ -38,7 +38,7 @@ section {
     section h1 {
         text-transform: uppercase;
         font-weight: 900;
-        color: #683aa4;
+        color: #b07960;
         text-align: left;
         margin-bottom: 20px;
     }
@@ -51,6 +51,9 @@ section {
 button {
     max-width: 50%;
     border-radius: 50px !important;
+    background-color: #d59475 !important;
+    border-color: #d59475 !important;
+    color: white;
 }
 
 #hero .col {
@@ -65,9 +68,9 @@ button {
 }
 
 #hero img {
-    max-width: 130%;
+    max-width: 100%;
     !important;
-    width: 130%;
+    width: 100%;
 }
 
 /* Styling for the cards */
@@ -83,8 +86,8 @@ button {
 
 /* Styling for Icons if added */
 #hero .icon {
-    width: 50px;
-    height: 50px;
+    width: 505px;
+    height: 515px;
     margin-bottom: 20px;
 }
 
@@ -96,7 +99,8 @@ button {
 /* contact section styling */
 #contact {
     text-align: center;
-    background-color: #683aa4;
+    background-color: #d59475 !important;
+    border-color: #d59475 !important;
     color: white;
 }
 
