@@ -60,6 +60,7 @@ button {
     justify-content: center;
     flex-direction: column;
     display: flex;
+    margin-top: 100px;
 }
 
 #hero .img-col {
@@ -71,6 +72,7 @@ button {
     max-width: 100%;
     !important;
     width: 100%;
+
 }
 
 /* Styling for the cards */
@@ -78,17 +80,21 @@ button {
     box-shadow: 11px 7px 16px #f9f9f9;
     border: 0;
     text-align: center;
+    margin-top: 20px;
 }
 
 #hero .cards .card {
     width: 18rem;
+    
+
 }
 
 /* Styling for Icons if added */
 #hero .icon {
-    width: 505px;
-    height: 515px;
+    width: 100%;
+    height: 100%;
     margin-bottom: 20px;
+    
 }
 
 /* Styling for the Project Section */
