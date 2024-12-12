@@ -26,6 +26,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Обмены</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/users">Пользователи</a>
+                </li>
 
 			</ul>
 		</div>
@@ -88,8 +91,8 @@
             </div>
             <div class="col">
                 <h1>Кратко о проекте</h1>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia tenetur reiciendis in quae, rem corporis id sequi debitis aliquam laudantium illum vel unde? Praesentium laboriosam neque eaque architecto maxime nihil?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia tenetur reiciendis in quae, rem corporis id sequi debitis aliquam laudantium illum vel unde? Praesentium laboriosam neque eaque architecto maxime nihil?</p>
+                <p>Проект представляет собой инновационный онлайн-сервис, предназначенный для обмена книгами между пользователями. На сайте каждый любитель литературы может зарегистрироваться, разместить свои книги для обмена и найти интересующие их произведения от других участников. Удобная система поиска позволяет быстро находить книги по жанрам, авторам и оценкам.</p>
+                <p>Пользователи могут оставлять рецензии на прочитанные книги, что способствует глубокой дискуссии о литературных произведениях и помогает другим пользователям делать осознанный выбор. Рецензии могут быть как краткими, так и развернутыми, что добавляет разнообразие в контент сайта.</p>
                 <button type="button" class="btn btn-dark btn-lg">Подробнее</button>
             </div>
         </div>
@@ -101,43 +104,9 @@
         <div class="row align-items-center projects">
             <div class="col">
                 <h1>Я люблю закладки!</h1>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem quod aliquam corporis tempore nostrum. Animi rem quisquam deleniti qui ad ipsa quod! Animi corrupti, ex blanditiis dolor error nulla consectetur.</p>
+               
             </div>
         </div>
     </div>
 </section>
 
-@foreach (var user in result)
-{
-	<p>@user.UsersId @user.Username @user.Email</p>
-}
-
-@code{
-	public class User
-	{
-		public int UsersId { get; set; }
-		public string Username { get; set; } = null!;
-		public string Email { get; set; } = null!;
-		public string UserPassword { get; set; } = null!;
-		public int? FollowerNumber { get; set; }
-		public int? FollowingNumber { get; set; }
-	}
-
-	public User[] result = new User[] { };
-
-	string CurrentDate;
-	string CurrentTime;
-
-	protected override async Task OnInitializedAsync(){
-		var date = DateTime.Now;
-		CurrentDate = date.ToShortDateString();
-		CurrentTime = date.ToShortTimeString();
-
-		var client = new HttpClient();
-		client.BaseAddress = new Uri("https://apibackend-motuz-1.onrender.com/");
-
-		result = await client.GetFromJsonAsync<User[]>("api/Users");
-
-		return;
-	}
-}
