@@ -1,4 +1,4 @@
-﻿using ApiBackend.Models.Entities;
+﻿using ApiBackend.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
