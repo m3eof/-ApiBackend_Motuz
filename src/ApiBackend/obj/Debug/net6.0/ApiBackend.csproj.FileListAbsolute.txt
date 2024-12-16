@@ -148,10 +148,3 @@ C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ref
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.pdb
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.genruntimeconfig.cache
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ref\ApiBackend.dll
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\bin\Debug\net6.0\DataAccess.deps.json
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\bin\Debug\net6.0\DataAccess.runtimeconfig.json
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\obj\DataAccess.csproj.nuget.dgspec.json
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\obj\Debug\net6.0\DataAccess.sourcelink.json
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\obj\project.assets.json
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\appsettings.Development.json
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\appsettings.json
