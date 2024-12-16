@@ -75,8 +75,6 @@ C:\Users\Elena\Desktop\motuzprakt\ApiBackend\ApiBackend\obj\Debug\net6.0\ref\Api
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\ApiBackend\bin\Debug\net6.0\Humanizer.dll
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\ApiBackend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\ApiBackend\obj\Debug\net6.0\ApiBackend.sourcelink.json
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\appsettings.Development.json
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\appsettings.json
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\ApiBackend.exe
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\ApiBackend.deps.json
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\ApiBackend.runtimeconfig.json
@@ -132,8 +130,6 @@ C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\run
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.csproj.AssemblyReference.cache
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.AssemblyInfoInputs.cache
-C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.AssemblyInfo.cs
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.csproj.CoreCompileInputs.cache
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.MvcApplicationPartsAssemblyInfo.cache
@@ -152,3 +148,10 @@ C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ref
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.pdb
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.genruntimeconfig.cache
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ref\ApiBackend.dll
+C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\bin\Debug\net6.0\DataAccess.deps.json
+C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\bin\Debug\net6.0\DataAccess.runtimeconfig.json
+C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\obj\DataAccess.csproj.nuget.dgspec.json
+C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\obj\Debug\net6.0\DataAccess.sourcelink.json
+C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\obj\project.assets.json
+C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\appsettings.Development.json
+C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\DataAccess\appsettings.json
