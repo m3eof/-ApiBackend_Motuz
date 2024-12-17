@@ -3,9 +3,10 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ApiBackend.Authorization;
-using ApiBackend.Models.Accounts;
+using ApiBackend.Entities;
 using ApiBackend.Helpers;
 using ApiBackend.Models;
+using ApiBackend.Controllers;
 using System.Security.Cryptography;
 
 
@@ -39,6 +40,55 @@ namespace ApiBackend.Services
             !x.IsActive && 
             x.Created.AddDays(_appSettings.RefreshTokenTTL) <= DateTime.UtcNow);
         }
+
+        private async Task<User> getAccountByRefreshToken(string token)
+        {
+              var account = await _repositoryWrapper.Users
+                .Where(x => x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow)
+                .SingleOrDefaultAsync(); // Используем SingleOrDefaultAsync для асинхронного выполнения
+
+            // Проверяем, существует ли пользователь
+            if (account == null) throw new AppException("Invalid token");
+
+            return account;
+
+
+        }
+        private async Task<RefreshToken> rotateRefreshToken(RefreshToken refreshToken, string ipAddress)
+        {
+            // Ожидаем результат от асинхронного метода
+            var newRefreshToken = await _jwtUtils.GenerateRefreshToken(ipAddress);
+
+            // Отзываем старый токен
+            revokeRefreshToken(refreshToken, ipAddress, "Replaced by new token");
+
+            // Возвращаем новый refresh token
+            return newRefreshToken;
+        }
+
+        private void revokeRefreshToken(RefreshToken token, string ipAddress, string reason = null, string replacedByToken = null)
+        {
+            token.Revoked = DateTime.UtcNow;
+            token.RevokedByIp = ipAddress;
+            token.ReasonRevoked = reason;
+            token.ReplacedByToken = replacedByToken; // хз если честно
+        }
+        private void revokeDescendantRefreshTokens(RefreshToken refreshToken, User account, string ipAddress, string reason)
+        {
+            if (!string.IsNullOrEmpty(refreshToken.ReplacedByToken))
+            {
+                var childToken = account.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken.ReplacedByToken);
+                if (childToken.IsActive)
+                {
+                    revokeRefreshToken(childToken, ipAddress, reason);
+                }
+                else
+                {
+                    revokeDescendantRefreshTokens(childToken, account, ipAddress, reason);
+                }
+            }
+        }
+        
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress)
         {
@@ -79,7 +129,7 @@ namespace ApiBackend.Services
             //return _mapper.Map<AccountResponse>(account);
 
             var existingUserCount = await _repositoryWrapper.Users
-                .Where(x => x.Email == model.Email) // Фильтруем по условию
+                .Where(x => x.Email == model.Email) 
                 .CountAsync(); 
 
             if (existingUserCount > 0)
@@ -104,6 +154,19 @@ namespace ApiBackend.Services
            var account = await getAccount(id);
             _repositoryWrapper.Users.Remove(account);
             await _repositoryWrapper.SaveChangesAsync();
+        }
+
+        private async Task<User> getAccountByResetToken(string token)
+        {
+            // Находим пользователя с соответствующим токеном сброса пароля и проверяем, не истек ли срок действия токена
+            var account = await _repositoryWrapper.Users
+                .Where(x => x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow)
+                .SingleOrDefaultAsync(); // Используем SingleOrDefaultAsync для асинхронного выполнения
+
+            // Проверяем, существует ли пользователь
+            if (account == null) throw new AppException("Invalid token");
+
+            return account;
         }
 
         private async Task<string> generateResetToken()
@@ -138,15 +201,14 @@ namespace ApiBackend.Services
             //await _repositoryWrapper.SaveChangesAsync();
 
             var account = await _repositoryWrapper.Users
-        .FirstOrDefaultAsync(x => x.Email == model.Email); // Асинхронно ищем учетную запись по email
+        .FirstOrDefaultAsync(x => x.Email == model.Email); 
+            if (account == null) return; 
 
-            if (account == null) return; // Если учетная запись не найдена, выходим из метода
+            account.ResetToken = await generateResetToken(); 
+            account.ResetTokenExpires = DateTime.UtcNow.AddDays(1); 
 
-            account.ResetToken = await generateResetToken(); // Генерируем уникальный токен сброса пароля
-            account.ResetTokenExpires = DateTime.UtcNow.AddDays(1); // Устанавливаем время истечения токена
-
-            _repositoryWrapper.Users.Update(account); // Обновляем учетную запись
-            await _repositoryWrapper.SaveChangesAsync(); // Сохраняем изменения в базе данных
+            _repositoryWrapper.Users.Update(account); 
+            await _repositoryWrapper.SaveChangesAsync(); 
 
         }
 
@@ -162,24 +224,106 @@ namespace ApiBackend.Services
             return _mapper.Map<AccountResponse>(account);
         }
 
-        public Task<AuthenticateResponse> RefreshToken(string token, string ipAddress)
+        public async Task<AuthenticateResponse> RefreshToken(string token, string ipAddress)
         {
-            throw new NotImplementedException();
+            var account = await getAccountByRefreshToken(token);
+            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
+
+            if (refreshToken.IsRevoked)
+            {
+                revokeDescendantRefreshTokens(refreshToken, account, ipAddress, $"Attempted reuse of revoked ancestor token: {token}");
+                _repositoryWrapper.Users.Update(account);
+                await _repositoryWrapper.SaveChangesAsync();
+            }
+
+            if (!refreshToken.IsActive)
+                throw new AppException("Invalid token");
+
+            var newRefreshToken = await rotateRefreshToken(refreshToken, ipAddress);
+            account.RefreshTokens.Add(newRefreshToken);
+
+            removeOldRefreshTokens(account);
+
+            _repositoryWrapper.Users.Update(account);
+            await _repositoryWrapper.SaveChangesAsync();
+
+            var jwtToken = _jwtUtils.GenerateJwtToken(account);
+
+            var response = _mapper.Map<AuthenticateResponse>(account);
+            response.JwtToken = jwtToken;
+            response.RefreshToken = newRefreshToken.Token;
+            return response;
         }
 
-        public Task Register(RegisterRequest model, string origin)
+        private async Task<string> generateVerificationToken()
         {
-            throw new NotImplementedException();
+            var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+            var tokenIsUnique = !(await _repositoryWrapper.Users
+                .AnyAsync(x => x.VerificationToken == token));
+
+            if (!tokenIsUnique)
+                return await generateVerificationToken();
+
+            return token;
         }
 
-        public Task ResetPassword(ResetPasswordRequest model)
+        public async Task Register(RegisterRequest model, string origin)
         {
-            throw new NotImplementedException();
+            
+            var existingUserCount = await _repositoryWrapper.Users
+                .Where(x => x.Email == model.Email)
+                .CountAsync();
+
+           
+            if (existingUserCount > 0)
+                return;
+
+          
+            var account = _mapper.Map<User>(model);
+
+            
+            var isFirstAccount = await _repositoryWrapper.Users
+                .CountAsync() == 0; 
+            account.Role = isFirstAccount ? Role.Admin : Role.User;
+
+            
+            account.Created = DateTime.UtcNow;
+            account.Verified = DateTime.UtcNow;
+            account.VerificationToken = await generateVerificationToken();
+
+            
+            account.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+          
+            await _repositoryWrapper.Users.AddAsync(account); 
+            await _repositoryWrapper.SaveChangesAsync(); 
         }
 
-        public Task RevokeToken(string token, string ipAddress)
+        public async Task ResetPassword(ResetPasswordRequest model)
         {
-            throw new NotImplementedException();
+            var account = await getAccountByResetToken(model.Token);
+
+            account.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            account.PasswordReset = DateTime.UtcNow;
+            account.ResetToken = null;
+            account.ResetTokenExpires = null;
+
+            _repositoryWrapper.Users.Update(account);
+            await _repositoryWrapper.SaveChangesAsync();
+
+        }
+
+        public async Task RevokeToken(string token, string ipAddress)
+        {
+            var account = await getAccountByRefreshToken(token);
+            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
+
+            if (!refreshToken.IsActive)
+                throw new AppException("Invalid token");
+
+            revokeRefreshToken(refreshToken, ipAddress, "Revoked without replacement");
+            _repositoryWrapper.Users.Update(account);
+            await _repositoryWrapper.SaveChangesAsync();
         }
 
         private async Task<User> getAccount(int id)
@@ -197,7 +341,7 @@ namespace ApiBackend.Services
            var account = await getAccount(id);
 
             var existingUserCount = await _repositoryWrapper.Users
-                 .Where(x => x.Email == model.Email) // Фильтруем по условиюs
+                 .Where(x => x.Email == model.Email) 
                  .CountAsync();
 
             if (existingUserCount > 0)
@@ -216,14 +360,28 @@ namespace ApiBackend.Services
             return _mapper.Map<AccountResponse>(account);
         }
 
-        public Task ValidateResetToken(ValidateResetTokenRequest model)
+        public async Task ValidateResetToken(ValidateResetTokenRequest model)
         {
-            throw new NotImplementedException();
+            await getAccountByResetToken(model.Token);
         }
 
-        public Task VerifyEmail(string token)
+        public async Task VerifyEmail(string token)
         {
-            throw new NotImplementedException();
+            // Находим пользователя с данным токеном подтверждения
+            var account = await _repositoryWrapper.Users
+                .Where(x => x.VerificationToken == token)
+                .FirstOrDefaultAsync(); // Используем FirstOrDefaultAsync для асинхронного выполнения
+
+            // Проверяем, существует ли аккаунт
+            if (account == null)
+                throw new AppException("Verification failed");
+
+            // Обновляем данные аккаунта
+            account.Verified = DateTime.UtcNow;
+            account.VerificationToken = null;
+
+            _repositoryWrapper.Users.Update(account);
+            await _repositoryWrapper.SaveChangesAsync();
         }
     }
     
