@@ -56,3 +56,6 @@ C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\BlazorApp1\obj\Debug\net6.0\ref
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\BlazorApp1\obj\Debug\net6.0\BlazorApp1.pdb
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\BlazorApp1\obj\Debug\net6.0\BlazorApp1.genruntimeconfig.cache
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\BlazorApp1\obj\Debug\net6.0\ref\BlazorApp1.dll
+C:\Users\HP\Documents\GitHub\-ApiBackend_Motuz\src\BlazorApp1\obj\Debug\net6.0\BlazorApp1.dll
+C:\Users\HP\Documents\GitHub\-ApiBackend_Motuz\src\BlazorApp1\obj\Debug\net6.0\refint\BlazorApp1.dll
+C:\Users\HP\Documents\GitHub\-ApiBackend_Motuz\src\BlazorApp1\obj\Debug\net6.0\BlazorApp1.pdb

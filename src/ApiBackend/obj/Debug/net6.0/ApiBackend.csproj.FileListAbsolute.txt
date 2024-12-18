@@ -169,3 +169,7 @@ C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\Api
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ref\ApiBackend.dll
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\bin\Debug\net6.0\ApiBackend.xml
 C:\Users\Elena\Desktop\motuzprakt\ApiBackend\src\ApiBackend\obj\Debug\net6.0\ApiBackend.xml
+C:\Users\HP\Documents\GitHub\-ApiBackend_Motuz\src\ApiBackend\obj\Debug\net6.0\ApiBackend.dll
+C:\Users\HP\Documents\GitHub\-ApiBackend_Motuz\src\ApiBackend\obj\Debug\net6.0\refint\ApiBackend.dll
+C:\Users\HP\Documents\GitHub\-ApiBackend_Motuz\src\ApiBackend\obj\Debug\net6.0\ApiBackend.xml
+C:\Users\HP\Documents\GitHub\-ApiBackend_Motuz\src\ApiBackend\obj\Debug\net6.0\ApiBackend.pdb
