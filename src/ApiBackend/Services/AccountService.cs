@@ -92,12 +92,17 @@ namespace ApiBackend.Services
 
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress)
         {
-            var account = await _repositoryWrapper.Users.Include(x => x.ResetToken).AsNoTracking().FirstOrDefaultAsync(x => x.Email == model.Email);
+
+            var account = await _repositoryWrapper.Users
+     .Where(u => u.Email == model.Email)
+     .Include(u => u.RefreshTokens)
+     .FirstOrDefaultAsync();
+
 
             if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.UserPassword))
                 throw new AppException("Email or password is incorrect");
+
             var jwtToken = _jwtUtils.GenerateJwtToken(account);
-           
             var refreshToken = await _jwtUtils.GenerateRefreshToken(ipAddress);
             account.RefreshTokens.Add(refreshToken); // Теперь всё в порядке
 

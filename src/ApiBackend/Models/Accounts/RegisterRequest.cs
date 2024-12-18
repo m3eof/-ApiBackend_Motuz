@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ApiBackend.Models;
 
 namespace ApiBackend.Models.Accounts
 {
@@ -7,6 +8,9 @@ namespace ApiBackend.Models.Accounts
 
         [Required]
         public string Login { get; set; }
+
+        [Required]
+        public string Username { get; set; }
 
         [Required]
         public string Firstname { get; set; }
@@ -31,5 +35,6 @@ namespace ApiBackend.Models.Accounts
 
         [Range(typeof(bool), "true", "true")]
         public bool AcceptTerms { get; set; }
+
     }
 }

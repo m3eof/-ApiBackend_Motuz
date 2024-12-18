@@ -22,6 +22,50 @@ namespace ApiBackend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("ApiBackend.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AccountUsersId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByIp")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReasonRevoked")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReplacedByToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Revoked")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RevokedByIp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountUsersId");
+
+                    b.ToTable("RefreshToken");
+                });
+
             modelBuilder.Entity("ApiBackend.Models.Author", b =>
                 {
                     b.Property<int>("AuthorId")
@@ -246,50 +290,6 @@ namespace ApiBackend.Migrations
                         .IsUnique();
 
                     b.ToTable("Preferences");
-                });
-
-            modelBuilder.Entity("ApiBackend.Models.RefreshToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AccountUsersId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedByIp")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Expires")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReasonRevoked")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReplacedByToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Revoked")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RevokedByIp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountUsersId");
-
-                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("ApiBackend.Models.Review", b =>
@@ -554,6 +554,17 @@ namespace ApiBackend.Migrations
                     b.ToTable("Likes", (string)null);
                 });
 
+            modelBuilder.Entity("ApiBackend.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("ApiBackend.Models.User", "Account")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("AccountUsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("ApiBackend.Models.Book", b =>
                 {
                     b.HasOne("ApiBackend.Models.Author", "Author")
@@ -662,17 +673,6 @@ namespace ApiBackend.Migrations
                     b.Navigation("Genre");
 
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("ApiBackend.Models.RefreshToken", b =>
-                {
-                    b.HasOne("ApiBackend.Models.User", "Account")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("AccountUsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("ApiBackend.Models.Review", b =>

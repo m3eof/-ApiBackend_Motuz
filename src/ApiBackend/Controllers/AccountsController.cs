@@ -6,12 +6,13 @@ using ApiBackend.Models.Accounts;
 using ApiBackend.Models;
 using static ApiBackend.Authorization.AllowAnonymousAttribute;
 using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 
 
 namespace ApiBackend.Controllers
 {
-    [Authorize]
+    [Authorization.Authorize]
     [ApiController]
     [Route("[controller]")]
     public class AccountsController : BaseController
@@ -42,7 +43,7 @@ namespace ApiBackend.Controllers
                 return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
 
-        [AllowAnonymousAttribute]
+        [AllowAnonymous]
         [HttpPost("authenticate")]
         public async Task<ActionResult<AuthenticateResponse>> Authenticate(AuthenticateRequest model)
         {
@@ -51,7 +52,7 @@ namespace ApiBackend.Controllers
             return Ok(response);
         }
 
-        [AllowAnonymousAttribute]
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<AuthenticateResponse>> RefreshToken()
         {
@@ -76,16 +77,18 @@ namespace ApiBackend.Controllers
             return Ok(new { message = "Token revoked" });
         }
 
-        [AllowAnonymousAttribute]
+        [AllowAnonymous]
         [HttpPost("register")]
+        
         public async Task<IActionResult> Register(RegisterRequest model)
-        {
+        { 
+
             await _accountService.Register(model, Request.Headers["origin"]);
             return Ok(new { message = "Registration successfulled, please check your email for verificitaion instructions" });
 
         }
 
-        [AllowAnonymousAttribute]
+        [AllowAnonymous]
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest model)
         {
@@ -93,7 +96,7 @@ namespace ApiBackend.Controllers
             return Ok(new { message = "Please check your email for password reset instructions" });
         }
 
-        [AllowAnonymousAttribute]
+        [AllowAnonymous]
         [HttpPost("validate-reset-token")]
         public async Task<IActionResult> ValidateResetToken(ValidateResetTokenRequest model)
         {
@@ -101,7 +104,7 @@ namespace ApiBackend.Controllers
             return Ok(new { message = "Token is valid" });
         }
 
-        [AllowAnonymousAttribute]
+        [AllowAnonymous]
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
         {
@@ -109,7 +112,7 @@ namespace ApiBackend.Controllers
             return Ok(new { message = "Password reset successful, you can now logiin" });
         }
 
-        [Authorize(Role.Admin)]
+        [Authorization.Authorize(Role.Admin)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountResponse>>> GetAll()
         {
@@ -127,7 +130,7 @@ namespace ApiBackend.Controllers
             return Ok(account);
         }
 
-        [Authorize(Role.Admin)]
+        [Authorization.Authorize(Role.Admin)]
         [HttpPost]
         public async Task<ActionResult<AccountResponse>> Create(CreateRequest model)
         {
