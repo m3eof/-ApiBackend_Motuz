@@ -54,7 +54,11 @@
             },
             "Mapster": {
               "target": "Package",
-              "version": "[6.5.1, )"
+              "version": "[7.4.0, )"
+            },
+            "Mapster.DependencyInjection": {
+              "target": "Package",
+              "version": "[1.0.1, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",

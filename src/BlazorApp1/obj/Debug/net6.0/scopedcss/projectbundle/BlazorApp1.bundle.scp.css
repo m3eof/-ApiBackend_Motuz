@@ -1,4 +1,4 @@
-/* /Shared/MainLayout.razor.rz.scp.css */
+/* _content/BlazorApp1/Shared/MainLayout.razor.rz.scp.css */
 .page[b-45rkf8v3vv] {
     position: relative;
     display: flex;
@@ -80,7 +80,7 @@ main[b-45rkf8v3vv] {
         padding-right: 1.5rem !important;
     }
 }
-/* /Shared/NavMenu.razor.rz.scp.css */
+/* _content/BlazorApp1/Shared/NavMenu.razor.rz.scp.css */
 .navbar-toggler[b-b5wscdn8ts] {
     background-color: rgba(255, 255, 255, 0.1);
 }
