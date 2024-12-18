@@ -40,7 +40,7 @@ namespace ApiBackend
 
 
 
-         
+
 
             builder.Services.AddSwaggerGen(options =>
             {
@@ -88,7 +88,7 @@ namespace ApiBackend
                         new List<string>()
                       }
                     });
-               
+
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
@@ -111,19 +111,19 @@ namespace ApiBackend
                     app.UseSwaggerUI();
                 }
 
-			// app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
-            app.UseCors(builder => builder.WithOrigins(new[] {"https://localhost:7274/", })
-            .AllowAnyHeader() 
-            .AllowAnyOrigin()
-            .AllowAnyMethod());
+            app.UseHttpsRedirection();
+            app.UseCors(builder =>
+                builder.WithOrigins(new[] { "https://localhost:7274/" })
+                .AllowAnyHeader()
+                .AllowAnyOrigin()
+                .AllowAnyMethod());
 
+            app.UseAuthentication(); 
+            app.UseAuthorization();  
 
-
-		    app.UseHttpsRedirection();
-            app.UseAuthorization();
-
-            app.UseMiddleware<ErrorHandlerMiddleware>();
+           // app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<JwtMiddleware>();
 
 

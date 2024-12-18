@@ -26,7 +26,7 @@ namespace ApiBackend.Authorization
             var account = (User)context.HttpContext.Items["User"];
             if (account == null || (_roles.Any() && !_roles.Contains(account.Role)))
             {
-                context.Result = new JsonResult(new { message = "Unauthorizes" }) { StatusCode = StatusCodes.Status401Unauthorized };
+                context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
             
         }

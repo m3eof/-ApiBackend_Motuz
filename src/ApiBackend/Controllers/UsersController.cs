@@ -1,6 +1,10 @@
 ﻿using ApiBackend.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using ApiBackend.Entities;
+using Microsoft.AspNetCore.Authorization;
+using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 
 namespace ApiBackend.Controllers
 {
@@ -14,11 +18,11 @@ namespace ApiBackend.Controllers
         public int? FollowerNumber { get; set; }
         public int? FollowingNumber { get; set; }
     }
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
 
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
         public recensiiContext Context { get; }
 
@@ -27,18 +31,27 @@ namespace ApiBackend.Controllers
             Context = context;
         }
 
+
+
+
+        [Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
             List<User> users = Context.Users.ToList();
             return Ok(users);
+
         }
 
-        [HttpGet("getById/{id:int}")]
 
+        [Authorize]
+        [HttpGet("getById/{id:int}")]
         public IActionResult GetById(int id)
         {
-            User? user = Context.Users.Where(x => x.UsersId == id).FirstOrDefault();
+            if (id != User.UsersId && User.Role != Role.Admin)
+                return Unauthorized(new { message = "Unauthorized" });
+
+            User? user = Context.Users.FirstOrDefault(x => x.UsersId == id);
             if (user == null)
             {
                 return BadRequest("Not Found");
@@ -46,22 +59,25 @@ namespace ApiBackend.Controllers
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpGet("getUserByUsername/{username}")]
         public IActionResult GetUserByUsername(string username)
         {
-           
+
+
             var user = Context.Users.FirstOrDefault(x => x.Username == username);
 
-           
+
             if (user == null)
             {
                 return NotFound("User not found");
             }
 
-           
+
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpPost]
 
         public IActionResult Add(UsersModel user)
@@ -91,6 +107,7 @@ namespace ApiBackend.Controllers
             return Ok(userAdd);
         }
 
+        [Authorize]
         [HttpPut]
         public IActionResult Update(UsersModel user)
         {
@@ -122,6 +139,7 @@ namespace ApiBackend.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)
