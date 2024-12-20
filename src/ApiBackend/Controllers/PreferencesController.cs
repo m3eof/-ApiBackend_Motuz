@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -11,6 +14,7 @@ namespace ApiBackend.Controllers
         public int GenreId { get; set; }
     }
 
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PreferencesController : ControllerBase
@@ -23,14 +27,14 @@ namespace ApiBackend.Controllers
             Context = context;
         }
 
-
+        [Authorization.Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Preference> preferences = Context.Preferences.ToList();
             return Ok(preferences);
         }
-
+        [Authorization.Authorize]
         [HttpGet("getById/{id:int}")]
 
         public IActionResult GetById(int id)
@@ -43,8 +47,8 @@ namespace ApiBackend.Controllers
             return Ok(preference);
         }
 
-      
 
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(PreferencesModel preference)
@@ -58,7 +62,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(preferenceAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(PreferencesModel preference)
         {
@@ -74,7 +78,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

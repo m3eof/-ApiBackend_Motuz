@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -10,7 +13,7 @@ namespace ApiBackend.Controllers
         public int UsersId { get; set; }
         public int BookId { get; set; }
     }
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WishlistsController : ControllerBase
@@ -22,14 +25,14 @@ namespace ApiBackend.Controllers
             Context = context;
         }
 
-
+        [Authorization.Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Wishlist> wishlists = Context.Wishlists.ToList();
             return Ok(wishlists);
         }
-
+        [Authorization.Authorize]
         [HttpGet("getById/{id:int}")]
 
         public IActionResult GetById(int id)
@@ -43,7 +46,7 @@ namespace ApiBackend.Controllers
         }
 
 
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(WishlistsModel wishlist)
@@ -61,7 +64,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(wishlistAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(WishlistsModel wishlist)
         {
@@ -77,7 +80,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

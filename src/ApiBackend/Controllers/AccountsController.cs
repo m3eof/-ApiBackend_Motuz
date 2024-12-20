@@ -43,6 +43,7 @@ namespace ApiBackend.Controllers
                 return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
 
+
         [AllowAnonymous]
         [HttpPost("authenticate")]
         public async Task<ActionResult<AuthenticateResponse>> Authenticate(AuthenticateRequest model)
@@ -144,7 +145,7 @@ namespace ApiBackend.Controllers
             if (id != User.UsersId && User.Role != Role.Admin)
                 return Unauthorized(new { message = "Unauthorized" });
 
-            if (User.Role != Role.Admin)
+            if (User.Role == Role.Admin)
                 model.Role = null;
 
             var account = await _accountService.Update(id, model);

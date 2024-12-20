@@ -21,12 +21,16 @@ namespace ApiBackend
 
             builder.Services.AddDbContext<recensiiContext>(
                 options => options.UseSqlServer(builder.Configuration["ConnectionString"]));
-          // Add services to the container.
+            // Add services to the container.
 
-          builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
             builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
             builder.Services.AddScoped<IJwtUtils, JwtUtils>();
             builder.Services.AddScoped<IAccountService, AccountsService>();
@@ -113,14 +117,16 @@ namespace ApiBackend
 
             // app.UseHttpsRedirection();
 
-            app.UseHttpsRedirection();
             app.UseCors(builder =>
                 builder.WithOrigins(new[] { "https://localhost:7274/" })
                 .AllowAnyHeader()
                 .AllowAnyOrigin()
                 .AllowAnyMethod());
 
-            app.UseAuthentication(); 
+
+            app.UseHttpsRedirection();
+
+          
             app.UseAuthorization();  
 
            // app.UseMiddleware<ErrorHandlerMiddleware>();

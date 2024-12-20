@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -10,7 +13,7 @@ namespace ApiBackend.Controllers
         public string FullName { get; set; }
         public string? Bio { get; set; }
     }
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorsController : ControllerBase
@@ -22,14 +25,14 @@ namespace ApiBackend.Controllers
             Context = context;
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Author> authors = Context.Authors.ToList();
             return Ok(authors);
         }
-
+        [AllowAnonymous]
         [HttpGet("{id}")]
 
         public IActionResult GetById(int id)
@@ -42,6 +45,7 @@ namespace ApiBackend.Controllers
             return Ok(author);
         }
 
+        [AllowAnonymous]
         [HttpGet("getUserByUsername/FullName")]
         public IActionResult GetUserByUsername(string fullName)
         {
@@ -57,7 +61,7 @@ namespace ApiBackend.Controllers
 
             return Ok(author);
         }
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(AuthorsModel author)
@@ -80,7 +84,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(authorAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(AuthorsModel author)
         {
@@ -104,7 +108,8 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
+       
         [HttpDelete]
 
         public IActionResult Delete(int id)

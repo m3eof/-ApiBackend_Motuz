@@ -1,10 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Entities;
 using ApiBackend.Authorization;
 using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
-using ApiBackend.Entities;
 using Microsoft.AspNetCore.Authorization;
-using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 
 namespace ApiBackend.Controllers
 {
@@ -18,13 +17,13 @@ namespace ApiBackend.Controllers
         public int? FollowerNumber { get; set; }
         public int? FollowingNumber { get; set; }
     }
-    [Authorize]
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
 
     public class UsersController : BaseController
     {
-        public recensiiContext Context { get; }
+        public recensiiContext Context { get; set; }
 
         public UsersController(recensiiContext context)
         {
@@ -34,7 +33,7 @@ namespace ApiBackend.Controllers
 
 
 
-        [Authorize]
+        [Authorization.Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
@@ -44,7 +43,7 @@ namespace ApiBackend.Controllers
         }
 
 
-        [Authorize]
+        [Authorization.Authorize]
         [HttpGet("getById/{id:int}")]
         public IActionResult GetById(int id)
         {
@@ -107,7 +106,7 @@ namespace ApiBackend.Controllers
             return Ok(userAdd);
         }
 
-        [Authorize]
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(UsersModel user)
         {
@@ -139,7 +138,7 @@ namespace ApiBackend.Controllers
             return Ok();
         }
 
-        [Authorize]
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

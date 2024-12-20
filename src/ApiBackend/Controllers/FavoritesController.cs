@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -10,7 +13,7 @@ namespace ApiBackend.Controllers
         public int UsersId { get; set; }
         public int BookId { get; set; }
     }
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FavoritesController : ControllerBase
@@ -21,14 +24,14 @@ namespace ApiBackend.Controllers
         {
             Context = context;
         }
-
+        [Authorization.Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Favorite> favorites = Context.Favorites.ToList();
             return Ok(favorites);
         }
-
+        [Authorization.Authorize]
         [HttpGet("getById/{id:int}")]
 
         public IActionResult GetById(int id)
@@ -40,7 +43,7 @@ namespace ApiBackend.Controllers
             }
             return Ok(favorite);
         }
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(FavoritesModel favorite)
@@ -55,7 +58,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(favoriteAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(FavoritesModel favorite)
         {
@@ -71,7 +74,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

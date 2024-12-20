@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -10,7 +13,7 @@ namespace ApiBackend.Controllers
         public int ReviewId { get; set; }
         public int UsersId { get; set; }
     }
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SavedController : ControllerBase
@@ -22,14 +25,14 @@ namespace ApiBackend.Controllers
             Context = context;
         }
 
-
+        [Authorization.Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Saved> saveds = Context.Saveds.ToList();
             return Ok(saveds);
         }
-
+        [Authorization.Authorize]
         [HttpGet("getById/{id:int}")]
 
         public IActionResult GetById(int id)
@@ -43,7 +46,7 @@ namespace ApiBackend.Controllers
         }
 
 
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(SavedModel saved)
@@ -59,7 +62,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(savedAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(SavedModel saved)
         {
@@ -75,7 +78,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

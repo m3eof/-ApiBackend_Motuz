@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -13,7 +16,7 @@ namespace ApiBackend.Controllers
         public int Rating { get; set; }
         public string? ReviewText { get; set; }
     }
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReviewsController : ControllerBase
@@ -26,14 +29,14 @@ namespace ApiBackend.Controllers
             Context = context;
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Review> reviews = Context.Reviews.ToList();
             return Ok(reviews);
         }
-
+        [AllowAnonymous]
         [HttpGet("{id}")]
 
         public IActionResult GetById(int id)
@@ -45,7 +48,7 @@ namespace ApiBackend.Controllers
             }
             return Ok(review);
         }
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(ReviewsModel review)
@@ -64,7 +67,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(reviewAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(ReviewsModel review)
         {
@@ -83,7 +86,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

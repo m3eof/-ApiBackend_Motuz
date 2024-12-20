@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -9,7 +12,7 @@ namespace ApiBackend.Controllers
         public int GenreId { get; set; }
         public string NameOfGenre { get; set; } = null!;
     }
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GenresController : ControllerBase
@@ -21,14 +24,14 @@ namespace ApiBackend.Controllers
         {
             Context = context;
         }
-
+        [Authorization.Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Genre> genres = Context.Genres.ToList();
             return Ok(genres);
         }
-
+        [Authorization.Authorize]
         [HttpGet("getById/{id:int}")]
 
         public IActionResult GetById(int id)
@@ -40,7 +43,7 @@ namespace ApiBackend.Controllers
             }
             return Ok(genre);
         }
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(GenresModel genre)
@@ -53,7 +56,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(genreAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(GenresModel genre)
         {
@@ -68,7 +71,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

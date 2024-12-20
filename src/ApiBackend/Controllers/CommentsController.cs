@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -12,7 +15,7 @@ namespace ApiBackend.Controllers
         public int UsersId { get; set; }
         public string TextComment { get; set; } = null!;
     }
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CommentsController : ControllerBase
@@ -24,14 +27,14 @@ namespace ApiBackend.Controllers
             Context = context;
         }
 
-
+        [Authorization.Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Comment> comments = Context.Comments.ToList();
             return Ok(comments);
         }
-
+        [Authorization.Authorize]
         [HttpGet("getById/{id:int}")]
 
         public IActionResult GetById(int id)
@@ -43,7 +46,7 @@ namespace ApiBackend.Controllers
             }
             return Ok(comment);
         }
-
+        [Authorization.Authorize]
         [HttpGet("getUserByUsername/Username")]
         public IActionResult GetUserByUsername(string username)
         {
@@ -56,7 +59,7 @@ namespace ApiBackend.Controllers
 
             return Ok(comment);
         }
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(CommentsModel comment)
@@ -73,7 +76,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(commentAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(CommentsModel comment)
         {
@@ -90,7 +93,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

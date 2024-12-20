@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -12,7 +15,7 @@ namespace ApiBackend.Controllers
         public int PublishedYear { get; set; }
         public int GenreId { get; set; }
     }
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
@@ -25,14 +28,14 @@ namespace ApiBackend.Controllers
             Context = context;
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Book> books = Context.Books.ToList();
             return Ok(books);
         }
-
+        [AllowAnonymous]
         [HttpGet("{id}")]
 
         public IActionResult GetById(int id)
@@ -44,7 +47,7 @@ namespace ApiBackend.Controllers
             }
             return Ok(book);
         }
-
+        [AllowAnonymous]
         [HttpGet("getUserByUsername/Title")]
         public IActionResult GetBookByTitle(string title)
         {
@@ -60,7 +63,7 @@ namespace ApiBackend.Controllers
 
             return Ok(book);
         }
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(BooksModel book)
@@ -85,7 +88,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(bookAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(BooksModel book)
         {
@@ -109,7 +112,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)

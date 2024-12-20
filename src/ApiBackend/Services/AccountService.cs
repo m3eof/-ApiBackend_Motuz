@@ -8,6 +8,7 @@ using ApiBackend.Helpers;
 using ApiBackend.Models;
 using ApiBackend.Controllers;
 using System.Security.Cryptography;
+using System.Security.Principal;
 
 
 namespace ApiBackend.Services
@@ -43,14 +44,19 @@ namespace ApiBackend.Services
 
         private async Task<User> getAccountByRefreshToken(string token)
         {
-              var account = await _repositoryWrapper.Users
-                .Where(x => x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow)
-                .SingleOrDefaultAsync(); // Используем SingleOrDefaultAsync для асинхронного выполнения
-
-            // Проверяем, существует ли пользователь
+            var account = (_repositoryWrapper.Users.Where(x => x.RefreshTokens.Any(
+               t => t.Token == token))).FirstOrDefault();
             if (account == null) throw new AppException("Invalid token");
-
             return account;
+
+            //  var account = await _repositoryWrapper.Users
+            //    .Where(x => x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow)
+            //    .SingleOrDefaultAsync(); // Используем SingleOrDefaultAsync для асинхронного выполнения
+
+            //// Проверяем, существует ли пользователь
+            //if (account == null) throw new AppException("Invalid token");
+
+            //return account;
 
 
         }
@@ -93,29 +99,53 @@ namespace ApiBackend.Services
         public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress)
         {
 
-            var account = await _repositoryWrapper.Users
-     .Where(u => u.Email == model.Email)
-     .Include(u => u.RefreshTokens)
-     .FirstOrDefaultAsync();
-
-
+            var account = await _repositoryWrapper.Users.Include(x => x.RefreshTokens).AsNoTracking().FirstOrDefaultAsync(x => x.Email == model.Email);
             if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.UserPassword))
                 throw new AppException("Email or password is incorrect");
 
             var jwtToken = _jwtUtils.GenerateJwtToken(account);
             var refreshToken = await _jwtUtils.GenerateRefreshToken(ipAddress);
-            account.RefreshTokens.Add(refreshToken); // Теперь всё в порядке
+
+            if (refreshToken == null)
+            {
+                throw new AppException("Failed to generate refresh token");
+            }
+            account.RefreshTokens.Add(refreshToken);
 
             removeOldRefreshTokens(account);
-
 
             _repositoryWrapper.Users.Update(account);
             await _repositoryWrapper.SaveChangesAsync();
 
-            var response = _mapper.Map<AuthenticateResponse>(account);
+            var response = _mapper.Map<AuthenticateResponse>(model);
             response.JwtToken = jwtToken;
             response.RefreshToken = refreshToken.Token;
+            // return response;
             return response;
+
+            //       var account = await _repositoryWrapper.Users
+            //.Where(u => u.Email == model.Email)
+            //.Include(u => u.RefreshTokens)
+            //.FirstOrDefaultAsync();
+
+
+            //if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.UserPassword))
+            //    throw new AppException("Email or password is incorrect");
+
+            //var jwtToken = _jwtUtils.GenerateJwtToken(account);
+            //var refreshToken = await _jwtUtils.GenerateRefreshToken(ipAddress);
+            //account.RefreshTokens.Add(refreshToken); // Теперь всё в порядке
+
+            //removeOldRefreshTokens(account);
+
+
+            //_repositoryWrapper.Users.Update(account);
+            //await _repositoryWrapper.SaveChangesAsync();
+
+            //var response = _mapper.Map<AuthenticateResponse>(account);
+            //response.JwtToken = jwtToken;
+            //response.RefreshToken = refreshToken.Token;
+            //return response;
         }
 
         public async Task<AccountResponse> Create(CreateRequest model)
@@ -157,21 +187,26 @@ namespace ApiBackend.Services
         public async Task Delete(int id)
         {
            var account = await getAccount(id);
-            _repositoryWrapper.Users.Remove(account);
+            _repositoryWrapper.Users.Update(account);
             await _repositoryWrapper.SaveChangesAsync();
         }
 
         private async Task<User> getAccountByResetToken(string token)
         {
-            // Находим пользователя с соответствующим токеном сброса пароля и проверяем, не истек ли срок действия токена
-            var account = await _repositoryWrapper.Users
-                .Where(x => x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow)
-                .SingleOrDefaultAsync(); // Используем SingleOrDefaultAsync для асинхронного выполнения
-
-            // Проверяем, существует ли пользователь
+            var account = (_repositoryWrapper.Users.Where(x => x.ResetToken == token
+           && x.ResetTokenExpires > DateTime.UtcNow)).SingleOrDefault();
             if (account == null) throw new AppException("Invalid token");
-
             return account;
+
+            //// Находим пользователя с соответствующим токеном сброса пароля и проверяем, не истек ли срок действия токена
+            //var account = await _repositoryWrapper.Users
+            //    .Where(x => x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow)
+            //    .SingleOrDefaultAsync(); // Используем SingleOrDefaultAsync для асинхронного выполнения
+
+            //// Проверяем, существует ли пользователь
+            //if (account == null) throw new AppException("Invalid token");
+
+            //return account;
         }
 
         private async Task<string> generateResetToken()
@@ -205,8 +240,10 @@ namespace ApiBackend.Services
             //_repositoryWrapper.Users.Update(account);
             //await _repositoryWrapper.SaveChangesAsync();
 
-            var account = await _repositoryWrapper.Users
-        .FirstOrDefaultAsync(x => x.Email == model.Email); 
+            //    var account = await _repositoryWrapper.Users
+            //.FirstOrDefaultAsync(x => x.Email == model.Email); 
+
+            var account = _repositoryWrapper.Users.Where(x => x.Email == model.Email).FirstOrDefault();
             if (account == null) return; 
 
             account.ResetToken = await generateResetToken(); 
@@ -219,8 +256,8 @@ namespace ApiBackend.Services
 
         public async Task<IEnumerable<AccountResponse>> GetAll()
         {
-            var accounts = await _repositoryWrapper.Users.ToListAsync();
-            return _mapper.Map<IList<AccountResponse>>(accounts);
+            List<User> users = await _repositoryWrapper.Users.ToListAsync();
+            return _mapper.Map<IList<AccountResponse>>(users);
         }
 
         public async Task<AccountResponse> GetById(int id)
@@ -263,45 +300,58 @@ namespace ApiBackend.Services
         private async Task<string> generateVerificationToken()
         {
             var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
-            var tokenIsUnique = !(await _repositoryWrapper.Users
-                .AnyAsync(x => x.VerificationToken == token));
-
-            if (!tokenIsUnique)
+            var tokenIsUnique = await _repositoryWrapper.Users.Where(x => x.VerificationToken == token).CountAsync();
+            if (tokenIsUnique > 0)
                 return await generateVerificationToken();
-
             return token;
         }
 
         public async Task Register(RegisterRequest model, string origin)
         {
-            
-            var existingUserCount = await _repositoryWrapper.Users
-                .Where(x => x.Email == model.Email)
-                .CountAsync();
 
-           
-            if (existingUserCount > 0)
+            string email = model.Email;
+            if (await _repositoryWrapper.Users.AnyAsync(x => x.Email == email))
                 return;
 
-          
             var account = _mapper.Map<User>(model);
-
-            
-            var isFirstAccount = await _repositoryWrapper.Users
-                .CountAsync() == 0; 
+            var isFirstAccount = !(await _repositoryWrapper.Users.AnyAsync(x => x.Email == model.Email));
+            account.Username = model.Username;
             account.Role = isFirstAccount ? Role.Admin : Role.User;
-
-            
-            account.Created = DateTime.UtcNow;
             account.Verified = DateTime.UtcNow;
+            account.Created = DateTime.UtcNow;
             account.VerificationToken = await generateVerificationToken();
-
-            
             account.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-          
-            await _repositoryWrapper.Users.AddAsync(account); 
-            await _repositoryWrapper.SaveChangesAsync(); 
+            await _repositoryWrapper.Users.AddAsync(account);
+            await _repositoryWrapper.SaveChangesAsync();
+
+            //var existingUserCount = await _repositoryWrapper.Users
+            //    .Where(x => x.Email == model.Email)
+            //    .CountAsync();
+
+
+            //if (existingUserCount > 0)
+            //    return;
+
+
+            //var account = _mapper.Map<User>(model);
+
+
+            //var isFirstAccount = await _repositoryWrapper.Users
+            //    .CountAsync() == 0; 
+            //account.Role = isFirstAccount ? Role.Admin : Role.User;
+
+
+            //account.Created = DateTime.UtcNow;
+            //account.Verified = DateTime.UtcNow;
+            //account.VerificationToken = await generateVerificationToken();
+
+
+            //account.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+
+            //await _repositoryWrapper.Users.AddAsync(account); 
+            //await _repositoryWrapper.SaveChangesAsync(); 
         }
 
         public async Task ResetPassword(ResetPasswordRequest model)
@@ -310,8 +360,9 @@ namespace ApiBackend.Services
 
             account.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
             account.PasswordReset = DateTime.UtcNow;
-            account.ResetToken = null;
             account.ResetTokenExpires = null;
+            account.ResetToken = null;
+           
 
             _repositoryWrapper.Users.Update(account);
             await _repositoryWrapper.SaveChangesAsync();
@@ -336,7 +387,8 @@ namespace ApiBackend.Services
             //     var account = await _repositoryWrapper.Users
             //.FirstOrDefaultAsync(x => x.UsersId == account.UsersId); // Асинхронно ищем учетную запись по email
             //var account = await _repositoryWrapper.Users.FindByCondition(x => x.Id == id).FirstOrDefaultAsync();
-            var account = await getAccount(id);
+            //var account = await getAccount(id);
+            var account = (_repositoryWrapper.Users.Where(x => x.UsersId == id)).FirstOrDefault();
             if (account == null) throw new KeyNotFoundException("Account not found");
             return account;
         }
@@ -345,24 +397,37 @@ namespace ApiBackend.Services
         {
            var account = await getAccount(id);
 
-            var existingUserCount = await _repositoryWrapper.Users
-                 .Where(x => x.Email == model.Email) 
-                 .CountAsync();
-
-            if (existingUserCount > 0)
-            {
-                throw new AppException($"Email '{model.Email}' is already registered");
-            }
+            if (await _repositoryWrapper.Users.Where(x => x.Email == model.Email).CountAsync() > 0)
+                throw new AppException($"Email '{model.Email} ' is already registered");
 
             if (!string.IsNullOrEmpty(model.Password))
                 account.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
             _mapper.Map(model, account);
             account.Updated = DateTime.UtcNow;
-             _repositoryWrapper.Users.Update(account);
+            _repositoryWrapper.Users.Update(account);
             await _repositoryWrapper.SaveChangesAsync();
 
             return _mapper.Map<AccountResponse>(account);
+
+            //var existingUserCount = await _repositoryWrapper.Users
+            //     .Where(x => x.Email == model.Email) 
+            //     .CountAsync();
+
+            //if (existingUserCount > 0)
+            //{
+            //    throw new AppException($"Email '{model.Email}' is already registered");
+            //}
+
+            //if (!string.IsNullOrEmpty(model.Password))
+            //    account.UserPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+            //_mapper.Map(model, account);
+            //account.Updated = DateTime.UtcNow;
+            // _repositoryWrapper.Users.Update(account);
+            //await _repositoryWrapper.SaveChangesAsync();
+
+            //return _mapper.Map<AccountResponse>(account);
         }
 
         public async Task ValidateResetToken(ValidateResetTokenRequest model)
@@ -372,21 +437,28 @@ namespace ApiBackend.Services
 
         public async Task VerifyEmail(string token)
         {
-            // Находим пользователя с данным токеном подтверждения
-            var account = await _repositoryWrapper.Users
-                .Where(x => x.VerificationToken == token)
-                .FirstOrDefaultAsync(); // Используем FirstOrDefaultAsync для асинхронного выполнения
-
-            // Проверяем, существует ли аккаунт
-            if (account == null)
-                throw new AppException("Verification failed");
-
-            // Обновляем данные аккаунта
+            var account = _repositoryWrapper.Users.FirstOrDefault(x => x.VerificationToken == token);
+            if (account == null) throw new AppException("Verification failed");
             account.Verified = DateTime.UtcNow;
             account.VerificationToken = null;
-
             _repositoryWrapper.Users.Update(account);
             await _repositoryWrapper.SaveChangesAsync();
+
+            //// Находим пользователя с данным токеном подтверждения
+            //var account = await _repositoryWrapper.Users
+            //    .Where(x => x.VerificationToken == token)
+            //    .FirstOrDefaultAsync(); // Используем FirstOrDefaultAsync для асинхронного выполнения
+
+            //// Проверяем, существует ли аккаунт
+            //if (account == null)
+            //    throw new AppException("Verification failed");
+
+            //// Обновляем данные аккаунта
+            //account.Verified = DateTime.UtcNow;
+            //account.VerificationToken = null;
+
+            //_repositoryWrapper.Users.Update(account);
+            //await _repositoryWrapper.SaveChangesAsync();
         }
     }
     

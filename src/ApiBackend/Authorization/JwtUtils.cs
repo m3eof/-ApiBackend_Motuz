@@ -9,6 +9,7 @@ using System.Text;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace ApiBackend.Authorization
 {
@@ -25,50 +26,38 @@ namespace ApiBackend.Authorization
 
         public string GenerateJwtToken(User account)
         {
-           var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", account.UsersId.ToString()) , new Claim(ClaimTypes.Role, account.Role.ToString())}),
+                Subject = new System.Security.Claims.ClaimsIdentity(new[] { new Claim("id", account.UsersId.ToString()) }),
                 Expires = DateTime.UtcNow.AddMinutes(15),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
 
         public async Task<RefreshToken> GenerateRefreshToken(string ipAddress)
         {
-            
-               
-                var refreshToken = new RefreshToken
-                {
-                    Token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64)), 
-                    Expires = DateTime.UtcNow.AddDays(7), 
-                    Created = DateTime.UtcNow, 
-                    CreatedByIp = ipAddress 
-                };
+            var refreshToken = new RefreshToken
+            {
+                Token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64)),
+                Expires = DateTime.UtcNow.AddDays(7),
+                Created = DateTime.UtcNow,
+                CreatedByIp = ipAddress
+            };
 
-                
-                var tokenIsUnique= await _wrapper.Users.AnyAsync(a =>
-                    a.RefreshTokens.Any(t => t.Token == refreshToken.Token)); 
-
-                
-                if (!tokenIsUnique)
-                {
-                    return await GenerateRefreshToken(ipAddress);
-                }
-
-                return refreshToken;
-            
+            var tokenIsUnique = (await _wrapper.Users.AnyAsync(a => a.RefreshTokens.Any(t => t.Token == refreshToken.Token)));
+            if (tokenIsUnique)
+                return await GenerateRefreshToken(ipAddress);
+            return refreshToken;
         }
+
 
         public int? ValidateJwtToken(string token)
         {
-            if (token == null)
-                return null;
-
+            if (token == null) return null;
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             try
@@ -79,20 +68,16 @@ namespace ApiBackend.Authorization
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
-
                     ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-
-                var jwtToken = (JwtSecurityToken)validatedToken;
+                }, out SecurityToken valiatedToken);
+                var jwtToken = (JwtSecurityToken)valiatedToken;
                 var accountId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
-
                 return accountId;
             }
             catch
             {
                 return null;
             }
-
         }
     }
 }

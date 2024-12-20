@@ -1,6 +1,9 @@
 ﻿using ApiBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ApiBackend.Authorization;
+using AllowAnonymousAttribute = ApiBackend.Authorization.AllowAnonymousAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiBackend.Controllers
 {
@@ -13,7 +16,7 @@ namespace ApiBackend.Controllers
         public string StatusOfExchange { get; set; } = null!;
     }
 
-
+    [Authorization.Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ExchangesController : ControllerBase
@@ -24,14 +27,14 @@ namespace ApiBackend.Controllers
         {
             Context = context;
         }
-
+        [Authorization.Authorize]
         [HttpGet]
         public IActionResult Getall()
         {
             List<Exchange> exchanges = Context.Exchanges.ToList();
             return Ok(exchanges);
         }
-
+        [Authorization.Authorize]
         [HttpGet("getById/{id:int}")]
 
         public IActionResult GetById(int id)
@@ -43,7 +46,7 @@ namespace ApiBackend.Controllers
             }
             return Ok(exchange);
         }
-
+        [Authorization.Authorize]
         [HttpPost]
 
         public IActionResult Add(ExchangesModel exchange)
@@ -59,7 +62,7 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok(exchangeAdd);
         }
-
+        [Authorization.Authorize]
         [HttpPut]
         public IActionResult Update(ExchangesModel exchange)
         {
@@ -79,8 +82,8 @@ namespace ApiBackend.Controllers
             Context.SaveChanges();
             return Ok();
         }
-       
 
+        [Authorization.Authorize]
         [HttpDelete]
 
         public IActionResult Delete(int id)
